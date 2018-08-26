@@ -303,19 +303,18 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
 
 
     private void simulateShift() {
-        System.out.println("simulating");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     InputStream earthquake = getApplicationContext().getAssets().open("Data_ElCentro250.txt");
                     BufferedReader earthquakeReader = new BufferedReader(new InputStreamReader(earthquake));
-                    String line = "";
-                    int removeHeader = 0;
+                    String line;
+                    int currentHeader = 0;
                     int numberofHeaders = 6;
-                    while (removeHeader < numberofHeaders) {
+                    while (currentHeader < numberofHeaders) {
                         line = earthquakeReader.readLine();
-                        removeHeader++;
+                        currentHeader++;
                     }
                     while ((line = earthquakeReader.readLine()) != null ) {
                         String[] rowValues = line.split(" ");
@@ -323,6 +322,14 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
                         int firstFloorSway = Integer.parseInt(rowValues[1]);
                         int secondFloorSway = Integer.parseInt(rowValues[2]);
                         int thirdFloorSway = Integer.parseInt(rowValues[3]);
+
+                        floorData.get(0).setXSway(firstFloorSway);
+                        floorData.get(1).setXSway(secondFloorSway);
+                        floorData.get(2).setXSway(thirdFloorSway);
+                        
+                        myRef.setValue(floorData);
+                        mFloorAdapter.setFloorData(floorData);
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
