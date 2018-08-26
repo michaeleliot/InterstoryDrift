@@ -317,22 +317,25 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
                         currentHeader++;
                     }
                     while ((line = earthquakeReader.readLine()) != null ) {
-                        String[] rowValues = line.split(" ");
-                        int time = Integer.parseInt(rowValues[0]); //not used, but left to reference why we only get 1,2, and 3
-                        int firstFloorSway = Integer.parseInt(rowValues[1]);
-                        int secondFloorSway = Integer.parseInt(rowValues[2]);
-                        int thirdFloorSway = Integer.parseInt(rowValues[3]);
+                        String[] rowValues = line.split("\t");
+                        double time = Double.parseDouble(rowValues[0]); //not used, but left to reference why we only get 1,2, and 3
+                        double firstFloorSway = Double.parseDouble(rowValues[1]);
+                        double secondFloorSway = Double.parseDouble(rowValues[2]);
+                        double thirdFloorSway = Double.parseDouble(rowValues[3]);
 
                         floorData.get(0).setXSway(firstFloorSway);
                         floorData.get(1).setXSway(secondFloorSway);
                         floorData.get(2).setXSway(thirdFloorSway);
-                        
-                        myRef.setValue(floorData);
-                        mFloorAdapter.setFloorData(floorData);
 
+                        myRef.setValue(floorData);
+                        Thread.sleep(100);
                     }
                 } catch (IOException e) {
+                    System.out.println("Error reading file");
                     e.printStackTrace();
+                } catch (InterruptedException interupted) {
+                    System.out.println("Time Delay Interupted");
+                    interupted.printStackTrace();
                 }
             }
         });
