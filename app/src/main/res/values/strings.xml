@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Interstory Drift</string>
+    <string name="action_settings">+</string>
+    <string name="error_message">Error</string>
+    <string name="floor_name">Floor Name</string>
+    <string name="simulate_earthquake">Simulate Earthquake</string>
+    <string name="movement">O</string>
+    <string name="center">|</string>
+
+</resources>

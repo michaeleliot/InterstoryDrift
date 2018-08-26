@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "5155830538",
+    "firebase_url": "https://interstorydrift.firebaseio.com",
+    "project_id": "interstorydrift",
+    "storage_bucket": "interstorydrift.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5155830538:android:2fd79796c00da168",
+        "android_client_info": {
+          "package_name": "com.example.michaeleliot.interstorydrift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5155830538-gh771h28ebst7ennrumluu6isedsuaer.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANwyKzU51IGERBp5wasTjSqKKmJia9Y8Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
