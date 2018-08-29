@@ -113,9 +113,15 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                 Floor updatedFloor = dataSnapshot.getValue(Floor.class);
-                Floor floor = floorData.get(updatedFloor.getFloorNumber() - 1);
-                floor.setXSway(updatedFloor.getXSway());
-                translate_floor(floor, updatedFloor.getXSway(), updatedFloor.getYSway(), updatedFloor.getZSway());
+                int floorNumber = updatedFloor.getFloorNumber();
+                Floor floor = floorData.get(floorNumber - 1);
+                double currentXSway = floor.getXSway();
+                double newXSway = updatedFloor.getXSway();
+                double currentZSway = floor.getZSway();
+                double newZSway = updatedFloor.getZSway();
+                translate_floor(floorNumber, currentXSway, newXSway, currentZSway, newZSway);
+                floor.setXSway(newXSway);
+                floor.setZSway(newZSway);
                 mCanvas.drawColor(Color.LTGRAY);
                 for (int index = 0; index < mXPaths.size(); index++) {
                     paint_path(mXPaths.get(index), floorData.get(index).getXSway());
@@ -224,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
     private void paint_path(Path path, double sway) {
         if (sway < 0.006) {
             mPaint.setColor(Color.GREEN);
-        } else if (sway < 0.006 & sway > 0.012) {
+        } else if (sway > 0.006 & sway < 0.012) {
             mPaint.setColor(Color.YELLOW);
         } else {
             mPaint.setColor(Color.RED);
@@ -284,21 +290,14 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
 
     }
 
-    private void translate_floor(Floor floor, double xsway, double ysway, double zsway) {
-        int floor_number = floor.getFloorNumber();
+    private void translate_floor(int floorNumber, double currentXSway, double newXSway, double currentZSway, double newZSway) {
+        Path xPath = mXPaths.get(floorNumber - 1);
+        xPath.offset((float) (newXSway - currentXSway) * 10000, 0);
+        mXPaths.set(floorNumber - 1, xPath);
 
-        Path Xpath = mXPaths.get(floor_number - 1);
-        int Xoffset = (int) xsway - mXPath_offsets.get(floor_number - 1);
-        Xpath.offset(Xoffset * 10, 0);
-        mXPath_offsets.set(floor_number - 1, (int) xsway);
-        mXPaths.set(floor_number - 1, Xpath);
-
-
-        Path Zpath = mZPaths.get(floor_number - 1);
-        int Zoffset = (int) zsway - mZPath_offsets.get(floor_number - 1);
-        Zpath.offset(10 * Zoffset, 0);
-        mZPath_offsets.set(floor_number - 1, (int) zsway);
-        mZPaths.set(floor_number - 1, Zpath);
+        Path zPath = mXPaths.get(floorNumber - 1);
+        zPath.offset((float) (newZSway - currentZSway) * 10000, 0);
+        mXPaths.set(floorNumber - 1, zPath);
     }
 
 
@@ -316,20 +315,29 @@ public class MainActivity extends AppCompatActivity implements FloorAdapterOnCli
                         line = earthquakeReader.readLine();
                         currentHeader++;
                     }
+                    String[] rowValues;
+                    ArrayList<Floor> floorDataCopy = new ArrayList<Floor>();
+                    floorDataCopy.add(new Floor(1, "Lobby", 0, 0, 0));
+                    floorDataCopy.add(new Floor(2, "Business", 0, 0, 0));
+                    floorDataCopy.add(new Floor(3, "Executive", 0, 0, 0));
+                    double time;
+                    double firstFloorSway;
+                    double secondFloorSway;
+                    double thirdFloorSway;
                     while ((line = earthquakeReader.readLine()) != null ) {
-                        String[] rowValues = line.split("\t");
-                        double time = Double.parseDouble(rowValues[0]); //not used, but left to reference why we only get 1,2, and 3
-                        double firstFloorSway = Double.parseDouble(rowValues[1]);
-                        double secondFloorSway = Double.parseDouble(rowValues[2]);
-                        double thirdFloorSway = Double.parseDouble(rowValues[3]);
+                        rowValues = line.split("\t");
+                        time = Double.parseDouble(rowValues[0]); //not used, but left to reference why we only get 1,2, and 3
+                        firstFloorSway = Double.parseDouble(rowValues[1]);
+                        secondFloorSway = Double.parseDouble(rowValues[2]);
+                        thirdFloorSway = Double.parseDouble(rowValues[3]);
+                        floorDataCopy.get(0).setXSway(firstFloorSway);
+                        floorDataCopy.get(1).setXSway(secondFloorSway);
+                        floorDataCopy.get(2).setXSway(thirdFloorSway);
 
-                        floorData.get(0).setXSway(firstFloorSway);
-                        floorData.get(1).setXSway(secondFloorSway);
-                        floorData.get(2).setXSway(thirdFloorSway);
-
-                        myRef.setValue(floorData);
+                        myRef.setValue(floorDataCopy);
                         Thread.sleep(100);
                     }
+                    earthquakeReader.close();
                 } catch (IOException e) {
                     System.out.println("Error reading file");
                     e.printStackTrace();
